@@ -1,0 +1,59 @@
+cabal-version:      3.0
+name:               draw
+version:            0.1.0.0
+-- synopsis:
+-- description:
+license:            NONE
+author:             nj.cooke@outlook.com
+maintainer:         Nick Cooke
+-- copyright:
+build-type:         Simple
+extra-doc-files:    CHANGELOG.md
+-- extra-source-files:
+
+common warnings
+    ghc-options: -Wall
+
+library
+    import:           warnings
+    exposed-modules:  MyLib
+    -- other-modules:
+    -- other-extensions:
+    build-depends:    
+        base ^>=4.16.4.0
+      , gi-gtk
+      , haskell-gi-base
+      , gi-gio
+
+    hs-source-dirs:   src
+    default-language: Haskell2010
+
+executable draw
+    import:           warnings
+    main-is:          Main.hs
+    -- other-modules:
+    -- other-extensions:
+    build-depends:
+        base ^>=4.16.4.0
+      , draw
+      , gi-gtk
+      , haskell-gi-base
+      , gi-gio
+      
+    hs-source-dirs:   app
+    default-language: Haskell2010
+
+test-suite draw-test
+    import:           warnings
+    default-language: Haskell2010
+    -- other-modules:
+    -- other-extensions:
+    type:             exitcode-stdio-1.0
+    hs-source-dirs:   test
+    main-is:          Main.hs
+    build-depends:
+        base ^>=4.16.4.0,
+        draw
+      , gi-gtk
+      , haskell-gi-base
+      , gi-gio
