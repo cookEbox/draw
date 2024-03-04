@@ -18,12 +18,6 @@ import Data.Text
 import System.Exit
 import System.Environment
 
-data Refs = Refs 
-  { surface :: IORef (Maybe Surface)
-  , lastPos :: IORef (Maybe (Double, Double)) 
-  , isDrawing :: IORef Bool
-  }
-
 {- Basic settings -}
 
 backGroundColor :: Render ()
@@ -44,7 +38,6 @@ handleDraw surfaceRef _ cairoContext = do
     Nothing -> return ()
   return True
 
-
 {- Handling Drawing from mouse being clicked and dragged -}
 
 updateSurface :: IORef (Maybe (Double, Double)) 
@@ -53,14 +46,12 @@ updateSurface lastPosRef surface newX newY = do
   Ren.renderWith surface $ do
       Ren.setLineWidth 2 
       penColor
-
       lastPos <- liftIO $ readIORef lastPosRef 
       case lastPos of
         Just (lastX, lastY) -> do 
           Ren.moveTo lastX lastY 
           Ren.lineTo newX newY 
         Nothing -> Ren.moveTo newX newY 
-
       Ren.stroke
   writeIORef lastPosRef (Just (newX, newY))
 
@@ -102,7 +93,6 @@ setupDrawingArea surfaceRef lastPosRef isDrawingRef drawingArea = do
       surface <- Ren.createImageSurface Ren.FormatARGB32 nWidth nHeight
       Ren.renderWith surface $ backGroundColor >> Ren.paint -- Initialize with white background
       writeIORef surfaceRef (Just surface)
-      
   return ()
 
 {- Start a surface on the activation of the app -}
@@ -134,29 +124,20 @@ addPage notebook num = do
                              , Gdk.EventMaskPointerMotionMask 
                              , Gdk.EventMaskButtonReleaseMask
                              ]
-
-      setupDrawingArea (surfaceRef) (lastPosRef) (isDrawingRef) drawingArea
+      setupDrawingArea surfaceRef lastPosRef isDrawingRef drawingArea
       #showAll notebook
+
 {- Initialise and setup drawingArea and Window etc -}
 
 activate :: Gtk.Application -> ApplicationActivateCallback 
 activate app = do 
-  -- surfaceRef <- newIORef Nothing 
-  -- lastPosRef <- newIORef Nothing
-  -- isDrawingRef <- newIORef False
-
   notebook <- new Gtk.Notebook []
-
-
   mapM_ (addPage notebook) [1..3]
-
-
   win <- new Gtk.ApplicationWindow [ #application := app 
                                    , #title := "Drawing Area"
                                    , On #destroy (Gtk.widgetDestroy ?self) 
                                    , #child := notebook
                                    ]
-
   #showAll win
 
 {- Starts application and handles closing error messages -}
@@ -166,9 +147,7 @@ main = do
   app <- new Gtk.Application [ #applicationId := "org.gtk.example"
                              , On #activate (activate ?self)
                              ] 
-
   argv <- liftA2 (:) getProgName getArgs 
   stas <- #run app $ Just argv
-
   when (stas /= 0) $
     exitWith $ ExitFailure (fromIntegral stas)
