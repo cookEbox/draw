@@ -20,10 +20,16 @@ library
     -- other-modules:
     -- other-extensions:
     build-depends:    
-        base ^>=4.16.4.0
-      , gi-gtk
+        base >=4.7 && <5
+      , gi-gtk ==3.0.41
+      , gi-gdk
       , haskell-gi-base
       , gi-gio
+      , cairo
+      , gi-cairo
+      , gi-cairo-connector
+      , gi-cairo-render
+      , transformers
 
     hs-source-dirs:   src
     default-language: Haskell2010
@@ -34,11 +40,17 @@ executable draw
     -- other-modules:
     -- other-extensions:
     build-depends:
-        base ^>=4.16.4.0
+        base >=4.7 && <5
       , draw
-      , gi-gtk
+      , gi-gtk ==3.0.41
+      , gi-gdk
       , haskell-gi-base
       , gi-gio
+      , cairo
+      , gi-cairo
+      , gi-cairo-connector
+      , gi-cairo-render
+      , transformers
       
     hs-source-dirs:   app
     default-language: Haskell2010
@@ -52,8 +64,14 @@ test-suite draw-test
     hs-source-dirs:   test
     main-is:          Main.hs
     build-depends:
-        base ^>=4.16.4.0,
-        draw
-      , gi-gtk
+        base >=4.7 && <5
+      , draw
+      , gi-gtk ==3.0.41
+      , gi-gdk
       , haskell-gi-base
       , gi-gio
+      , cairo
+      , gi-cairo
+      , gi-cairo-connector
+      , gi-cairo-render
+      , transformers
