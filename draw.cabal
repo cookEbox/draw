@@ -1,6 +1,6 @@
 cabal-version:      3.0
 name:               draw
-version:            0.1.0.0
+version:            0.1.0.2
 -- synopsis:
 -- description:
 license:            NONE
@@ -30,6 +30,7 @@ library
       , gi-cairo-connector
       , gi-cairo-render
       , transformers
+      , text
 
     hs-source-dirs:   src
     default-language: Haskell2010
@@ -51,6 +52,7 @@ executable draw
       , gi-cairo-connector
       , gi-cairo-render
       , transformers
+      , text
       
     hs-source-dirs:   app
     default-language: Haskell2010
@@ -75,3 +77,4 @@ test-suite draw-test
       , gi-cairo-connector
       , gi-cairo-render
       , transformers
+      , text

@@ -14,14 +14,25 @@ import GI.Gio
 import Data.IORef
 import Control.Applicative 
 import Control.Monad
+import Data.Text
 import System.Exit
 import System.Environment
+
+data Refs = Refs 
+  { surface :: IORef (Maybe Surface)
+  , lastPos :: IORef (Maybe (Double, Double)) 
+  , isDrawing :: IORef Bool
+  }
+
+{- Basic settings -}
 
 backGroundColor :: Render ()
 backGroundColor = Ren.setSourceRGB 0 0 0 
 
 penColor :: Render ()
 penColor = Ren.setSourceRGB 255 255 255
+
+{- Handling Draw Trigger -}
 
 handleDraw :: IORef (Maybe Surface) -> Gtk.DrawingArea 
            -> Cairo.Context -> IO Bool 
@@ -32,6 +43,9 @@ handleDraw surfaceRef _ cairoContext = do
       Con.renderWithContext Ren.paint cairoContext
     Nothing -> return ()
   return True
+
+
+{- Handling Drawing from mouse being clicked and dragged -}
 
 updateSurface :: IORef (Maybe (Double, Double)) 
               -> Surface -> Double -> Double -> IO ()
@@ -49,6 +63,8 @@ updateSurface lastPosRef surface newX newY = do
 
       Ren.stroke
   writeIORef lastPosRef (Just (newX, newY))
+
+{- Handle all the on drawingArea commands -}
 
 setupDrawingArea :: IORef (Maybe Surface) -> IORef (Maybe (Double, Double)) 
                  -> IORef Bool -> Gtk.DrawingArea -> IO ()
@@ -89,6 +105,8 @@ setupDrawingArea surfaceRef lastPosRef isDrawingRef drawingArea = do
       
   return ()
 
+{- Start a surface on the activation of the app -}
+
 initialiseSurface :: IORef (Maybe Surface) -> Gtk.DrawingArea -> IO ()
 initialiseSurface surfaceRef drawingArea = do 
     _ <- readIORef surfaceRef >>= \case 
@@ -102,31 +120,46 @@ initialiseSurface surfaceRef drawingArea = do
         return ()
     return ()
 
+addPage :: Gtk.Notebook -> Int -> IO ()
+addPage notebook num = do 
+      surfaceRef <- newIORef Nothing 
+      lastPosRef <- newIORef Nothing
+      isDrawingRef <- newIORef False
+      pageLabel <- new Gtk.Label [ #label := pack $ "Page " ++ show num ]
+      drawingArea <- new Gtk.DrawingArea [ #heightRequest := 600
+                                         , #widthRequest := 600
+                                         ]
+      _ <- Gtk.notebookAppendPage notebook drawingArea (Just pageLabel) 
+      #addEvents drawingArea [ Gdk.EventMaskButtonPressMask 
+                             , Gdk.EventMaskPointerMotionMask 
+                             , Gdk.EventMaskButtonReleaseMask
+                             ]
+
+      setupDrawingArea (surfaceRef) (lastPosRef) (isDrawingRef) drawingArea
+      #showAll notebook
+{- Initialise and setup drawingArea and Window etc -}
+
 activate :: Gtk.Application -> ApplicationActivateCallback 
 activate app = do 
-  surfaceRef <- newIORef Nothing 
-  lastPosRef <- newIORef Nothing
-  isDrawingRef <- newIORef False
+  -- surfaceRef <- newIORef Nothing 
+  -- lastPosRef <- newIORef Nothing
+  -- isDrawingRef <- newIORef False
 
-  drawingArea <- new Gtk.DrawingArea [ #heightRequest := 600
-                                     , #widthRequest := 600
-                                     ]
+  notebook <- new Gtk.Notebook []
 
-  #addEvents drawingArea [ Gdk.EventMaskButtonPressMask 
-                         , Gdk.EventMaskPointerMotionMask 
-                         , Gdk.EventMaskButtonReleaseMask
-                         ]
 
-  setupDrawingArea surfaceRef lastPosRef isDrawingRef drawingArea
+  mapM_ (addPage notebook) [1..3]
+
 
   win <- new Gtk.ApplicationWindow [ #application := app 
                                    , #title := "Drawing Area"
                                    , On #destroy (Gtk.widgetDestroy ?self) 
-                                   , #child := drawingArea
+                                   , #child := notebook
                                    ]
 
-
   #showAll win
+
+{- Starts application and handles closing error messages -}
 
 main :: IO ()
 main = do
