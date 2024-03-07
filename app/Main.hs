@@ -27,6 +27,10 @@ backGroundColor = Ren.setSourceRGB 0 0 0
 penColor :: Ren.Render ()
 penColor = Ren.setSourceRGB 255 255 255
 
+pageWidth, pageHeight :: Integral a => a 
+pageWidth = 2200
+pageHeight = 1300
+
 {- Handling Draw Trigger -}
 
 handleDraw :: IORef (Maybe Ren.Surface) -> Gtk.DrawingArea
@@ -88,10 +92,10 @@ setupDrawingArea surfaceRef lastPosRef isDrawingRef drawingArea = do
 
   -- Initialize the surface on realize
   _ <- on drawingArea #realize $ do
-    nWidth <- fromIntegral <$> #getAllocatedWidth drawingArea
-    nHeight <- fromIntegral <$> #getAllocatedHeight drawingArea
-    when (nWidth > 0 && nHeight > 0) $ do
-      surface <- Ren.createImageSurface Ren.FormatARGB32 nWidth nHeight
+    -- nWidth <- fromIntegral <$> #getAllocatedWidth drawingArea
+    -- nHeight <- fromIntegral <$> #getAllocatedHeight drawingArea
+    -- when (nWidth > 0 && nHeight > 0) $ do
+      surface <- Ren.createImageSurface Ren.FormatARGB32 pageWidth pageHeight
       Ren.renderWith surface $ backGroundColor >> Ren.paint -- Initialize with white background
       writeIORef surfaceRef (Just surface)
   return ()
@@ -103,9 +107,9 @@ initialiseSurface surfaceRef drawingArea = do
     _ <- readIORef surfaceRef >>= \case
       Just _ -> return ()
       Nothing -> do
-        nWidth <- fromIntegral <$> #getAllocatedWidth drawingArea
-        nHeight <- fromIntegral <$> #getAllocatedHeight drawingArea
-        s <- Ren.createImageSurface Ren.FormatARGB32 nWidth nHeight
+        -- nWidth <- fromIntegral <$> #getAllocatedWidth drawingArea
+        -- nHeight <- fromIntegral <$> #getAllocatedHeight drawingArea
+        s <- Ren.createImageSurface Ren.FormatARGB32 pageWidth pageHeight
         Ren.renderWith s $ backGroundColor >> Ren.paint -- Initialize with white background
         writeIORef surfaceRef (Just s)
         return ()
@@ -117,8 +121,8 @@ addPage notebook num = do
       lastPosRef <- newIORef Nothing
       isDrawingRef <- newIORef False
       pageLabel <- new Gtk.Label [ #label := pack $ "Page " ++ show num ]
-      drawingArea <- new Gtk.DrawingArea [ #heightRequest := 600
-                                         , #widthRequest := 600
+      drawingArea <- new Gtk.DrawingArea [ #widthRequest := pageWidth
+                                         , #heightRequest := pageHeight
                                          ]
       _ <- Gtk.notebookAppendPage notebook drawingArea (Just pageLabel)
       #addEvents drawingArea [ Gdk.EventMaskButtonPressMask
@@ -134,10 +138,16 @@ activate :: Gtk.Application -> ApplicationActivateCallback
 activate app = do
   notebook <- new Gtk.Notebook []
   mapM_ (addPage notebook) [1..3]
+  scrolledWin <- new Gtk.ScrolledWindow [ #hscrollbarPolicy := Gtk.PolicyTypeAlways
+                                        , #vscrollbarPolicy := Gtk.PolicyTypeAlways
+                                        , #child := notebook
+                                        ]
   win <- new Gtk.ApplicationWindow [ #application := app
                                    , #title := "Drawing Area"
                                    , On #destroy (Gtk.widgetDestroy ?self)
-                                   , #child := notebook
+                                   , #child := scrolledWin
+                                   , #defaultWidth := 1200 
+                                   , #defaultHeight := 1000
                                    ]
   #showAll win
 
