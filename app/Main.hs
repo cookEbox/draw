@@ -33,8 +33,10 @@ pageHeight = 1300
 
 {- Handling Draw Trigger -}
 
-handleDraw :: IORef (Maybe Ren.Surface) -> Gtk.DrawingArea
-           -> Cairo.Context -> IO Bool
+handleDraw :: IORef (Maybe Ren.Surface) 
+           -> Gtk.DrawingArea
+           -> Cairo.Context 
+           -> IO Bool
 handleDraw surfaceRef _ cairoContext = do
   readIORef surfaceRef >>= \case
     Just surface -> do
@@ -46,7 +48,10 @@ handleDraw surfaceRef _ cairoContext = do
 {- Handling Drawing from mouse being clicked and dragged -}
 
 updateSurface :: IORef (Maybe (Double, Double))
-              -> Ren.Surface -> Double -> Double -> IO ()
+              -> Ren.Surface 
+              -> Double 
+              -> Double 
+              -> IO ()
 updateSurface lastPosRef surface newX newY = do
   Ren.renderWith surface $ do
       Ren.setLineWidth 2
@@ -62,25 +67,27 @@ updateSurface lastPosRef surface newX newY = do
 
 {- Handle all the on drawingArea commands -}
 
-setupDrawingArea :: IORef (Maybe Ren.Surface) -> IORef (Maybe (Double, Double))
-                 -> IORef Bool -> Gtk.DrawingArea -> IO ()
-setupDrawingArea surfaceRef lastPosRef isDrawingRef drawingArea = do
-  -- Setup the draw event handler
-  _ <- on drawingArea #draw $ handleDraw surfaceRef drawingArea
+buttonPress :: Gdk.EventButton -> IORef Bool -> IO Bool
+buttonPress _ isDrawingRef = do 
+  writeIORef isDrawingRef True
+  return False
 
-  -- Handle mouse button press
-  _ <- on drawingArea #buttonPressEvent $ \_ -> do
-    writeIORef isDrawingRef True
-    return False
+buttonRelease :: Gdk.EventButton 
+              -> IORef Bool 
+              -> IORef (Maybe (Double, Double)) 
+              -> IO Bool
+buttonRelease _ isDrawingRef lastPosRef = do
+  writeIORef isDrawingRef False
+  writeIORef lastPosRef Nothing
+  return False
 
-  -- Handle mouse button release
-  _ <- on drawingArea #buttonReleaseEvent $ \_ -> do
-    writeIORef isDrawingRef False
-    writeIORef lastPosRef Nothing
-    return False
-
-  -- Handle mouse movement
-  _ <- on drawingArea #motionNotifyEvent $ \event -> do
+motionNotify :: Gdk.EventMotion 
+             -> IORef (Maybe Ren.Surface) 
+             -> IORef (Maybe (Double, Double))
+             -> IORef Bool 
+             -> Gtk.DrawingArea 
+             -> IO Bool
+motionNotify event surfaceRef lastPosRef isDrawingRef drawingArea = do
     isDrawing <- readIORef isDrawingRef
     when isDrawing $ do
       x <- get event #x
@@ -90,27 +97,22 @@ setupDrawingArea surfaceRef lastPosRef isDrawingRef drawingArea = do
       #queueDraw drawingArea -- Request a redraw
     return True
 
-  -- Initialize the surface on realize
-  _ <- on drawingArea #realize $ do
-    -- nWidth <- fromIntegral <$> #getAllocatedWidth drawingArea
-    -- nHeight <- fromIntegral <$> #getAllocatedHeight drawingArea
-    -- when (nWidth > 0 && nHeight > 0) $ do
-      surface <- Ren.createImageSurface Ren.FormatARGB32 pageWidth pageHeight
-      Ren.renderWith surface $ backGroundColor >> Ren.paint -- Initialize with white background
-      writeIORef surfaceRef (Just surface)
+realize :: IORef (Maybe Ren.Surface) -> IO ()
+realize surfaceRef = do 
+  surface <- Ren.createImageSurface Ren.FormatARGB32 pageWidth pageHeight
+  Ren.renderWith surface $ backGroundColor >> Ren.paint 
+  writeIORef surfaceRef (Just surface)
   return ()
 
 {- Start a surface on the activation of the app -}
 
-initialiseSurface :: IORef (Maybe Ren.Surface) -> Gtk.DrawingArea -> IO ()
-initialiseSurface surfaceRef drawingArea = do
+initialiseSurface :: IORef (Maybe Ren.Surface) -> IO ()
+initialiseSurface surfaceRef = do
     _ <- readIORef surfaceRef >>= \case
       Just _ -> return ()
       Nothing -> do
-        -- nWidth <- fromIntegral <$> #getAllocatedWidth drawingArea
-        -- nHeight <- fromIntegral <$> #getAllocatedHeight drawingArea
         s <- Ren.createImageSurface Ren.FormatARGB32 pageWidth pageHeight
-        Ren.renderWith s $ backGroundColor >> Ren.paint -- Initialize with white background
+        Ren.renderWith s $ backGroundColor >> Ren.paint 
         writeIORef surfaceRef (Just s)
         return ()
     return ()
@@ -121,15 +123,24 @@ addPage notebook num = do
       lastPosRef <- newIORef Nothing
       isDrawingRef <- newIORef False
       pageLabel <- new Gtk.Label [ #label := pack $ "Page " ++ show num ]
-      drawingArea <- new Gtk.DrawingArea [ #widthRequest := pageWidth
-                                         , #heightRequest := pageHeight
-                                         ]
+      drawingArea <- new Gtk.DrawingArea 
+        [ #widthRequest := pageWidth
+        , #heightRequest := pageHeight
+        , On #draw $ handleDraw surfaceRef ?self 
+        , On #buttonPressEvent $ \event 
+          -> buttonPress event isDrawingRef
+        , On #buttonReleaseEvent $ \event 
+          -> buttonRelease event isDrawingRef lastPosRef
+        , On #motionNotifyEvent $ \event 
+          -> motionNotify event surfaceRef lastPosRef isDrawingRef ?self
+        , On #realize $ realize surfaceRef
+        ]
       _ <- Gtk.notebookAppendPage notebook drawingArea (Just pageLabel)
-      #addEvents drawingArea [ Gdk.EventMaskButtonPressMask
-                             , Gdk.EventMaskPointerMotionMask
-                             , Gdk.EventMaskButtonReleaseMask
-                             ]
-      setupDrawingArea surfaceRef lastPosRef isDrawingRef drawingArea
+      #addEvents drawingArea 
+        [ Gdk.EventMaskButtonPressMask
+        , Gdk.EventMaskPointerMotionMask
+        , Gdk.EventMaskButtonReleaseMask
+        ]
       #showAll notebook
 
 {- Initialise and setup drawingArea and Window etc -}
@@ -138,17 +149,19 @@ activate :: Gtk.Application -> ApplicationActivateCallback
 activate app = do
   notebook <- new Gtk.Notebook []
   mapM_ (addPage notebook) [1..3]
-  scrolledWin <- new Gtk.ScrolledWindow [ #hscrollbarPolicy := Gtk.PolicyTypeAlways
-                                        , #vscrollbarPolicy := Gtk.PolicyTypeAlways
-                                        , #child := notebook
-                                        ]
-  win <- new Gtk.ApplicationWindow [ #application := app
-                                   , #title := "Drawing Area"
-                                   , On #destroy (Gtk.widgetDestroy ?self)
-                                   , #child := scrolledWin
-                                   , #defaultWidth := 1200 
-                                   , #defaultHeight := 1000
-                                   ]
+  scrolledWin <- new Gtk.ScrolledWindow 
+    [ #hscrollbarPolicy := Gtk.PolicyTypeAlways
+    , #vscrollbarPolicy := Gtk.PolicyTypeAlways
+    , #child := notebook
+    ]
+  win <- new Gtk.ApplicationWindow 
+    [ #application := app
+    , #title := "Drawing Area"
+    , On #destroy (Gtk.widgetDestroy ?self)
+    , #child := scrolledWin
+    , #defaultWidth := 1200 
+    , #defaultHeight := 1000
+    ]
   #showAll win
 
 {- Starts application and handles closing error messages -}
