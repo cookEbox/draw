@@ -7,12 +7,13 @@ work flow.
 1.  [x] A Drawable interface 
 2.  [x] Multiple Pages 
 3.  [x] Resizable window 
-4.  [ ] Add Pages Button
-5.  [ ] Change pages to horizontal tabs
-6.  [ ] Rubber 
-7.  [ ] A simple question generator
-8.  [ ] Resizable drawing area for monitor size 
-9.  [ ] Keep buttons visible
-10. [ ] Save page 
-11. [ ] Save all pages
+4.  [x] Add Pages Button
+5.  [ ] Remove Pages Button
+6.  [ ] Change pages to horizontal tabs
+7.  [ ] Rubber 
+8.  [ ] A simple question generator
+9.  [ ] Resizable drawing area for monitor size 
+10. [ ] Keep buttons visible
+11. [ ] Save page 
+12. [ ] Save all pages
 

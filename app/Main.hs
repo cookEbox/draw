@@ -117,12 +117,14 @@ initialiseSurface surfaceRef = do
         return ()
     return ()
 
-addPage :: Gtk.Notebook -> Int -> IO ()
-addPage notebook num = do
+addPage :: Gtk.Notebook -> IORef Int -> IO ()
+addPage notebook pageNumber = do
       surfaceRef <- newIORef Nothing
       lastPosRef <- newIORef Nothing
       isDrawingRef <- newIORef False
-      pageLabel <- new Gtk.Label [ #label := pack $ "Page " ++ show num ]
+      pg <- readIORef pageNumber
+      pageLabel <- new Gtk.Label [ #label := pack $ "Page " ++ show pg]
+      writeIORef pageNumber (pg + 1)
       drawingArea <- new Gtk.DrawingArea 
         [ #widthRequest := pageWidth
         , #heightRequest := pageHeight
@@ -148,20 +150,29 @@ addPage notebook num = do
 activate :: Gtk.Application -> ApplicationActivateCallback
 activate app = do
   notebook <- new Gtk.Notebook []
-  mapM_ (addPage notebook) [1..3]
+  pageNumber <- newIORef 1
+  readIORef pageNumber >>= \pg -> do
+    addPage notebook pageNumber
+    writeIORef pageNumber (pg + 1)
   scrolledWin <- new Gtk.ScrolledWindow 
-    [ #hscrollbarPolicy := Gtk.PolicyTypeAlways
-    , #vscrollbarPolicy := Gtk.PolicyTypeAlways
+    [ #hscrollbarPolicy := Gtk.PolicyTypeAutomatic
+    , #vscrollbarPolicy := Gtk.PolicyTypeAutomatic
     , #child := notebook
     ]
+  vbox <- new Gtk.Box [ #orientation := Gtk.OrientationVertical ]
   win <- new Gtk.ApplicationWindow 
     [ #application := app
     , #title := "Drawing Area"
     , On #destroy (Gtk.widgetDestroy ?self)
-    , #child := scrolledWin
+    , #child := vbox
     , #defaultWidth := 1200 
     , #defaultHeight := 1000
     ]
+  addPageButton <- new Gtk.Button [ #label := "Add Page" 
+                                  , On #clicked (addPage notebook pageNumber)]
+  #packStart vbox addPageButton False False 0
+  #packStart vbox scrolledWin True True 0
+
   #showAll win
 
 {- Starts application and handles closing error messages -}
