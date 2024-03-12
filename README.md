@@ -17,3 +17,8 @@ work flow.
 11. [ ] Save page 
 12. [ ] Save all pages
 
+### Subtasks
+5.  [ ] Remove Pages Button
+        - [x] A button that removes the current page 
+        - [ ] Adjust IORef to have new count
+        - [ ] Rename all labels 

@@ -145,6 +145,11 @@ addPage notebook pageNumber = do
         ]
       #showAll notebook
 
+removePage :: Gtk.Notebook -> IO ()
+removePage notebook = do 
+  currentPage <- Gtk.notebookGetCurrentPage notebook
+  Gtk.notebookRemovePage notebook currentPage
+
 {- Initialise and setup drawingArea and Window etc -}
 
 activate :: Gtk.Application -> ApplicationActivateCallback
@@ -169,8 +174,14 @@ activate app = do
     , #defaultHeight := 1000
     ]
   addPageButton <- new Gtk.Button [ #label := "Add Page" 
-                                  , On #clicked (addPage notebook pageNumber)]
+                                  , On #clicked (addPage notebook pageNumber)
+                                  ]
+  removePageButton <- new Gtk.Button [ #label := "Delete Current Page" 
+                                     , On #clicked (removePage notebook)
+                                     ]
+
   #packStart vbox addPageButton False False 0
+  #packStart vbox removePageButton False False 0
   #packStart vbox scrolledWin True True 0
 
   #showAll win
