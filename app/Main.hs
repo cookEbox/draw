@@ -117,14 +117,13 @@ initialiseSurface surfaceRef = do
         return ()
     return ()
 
-addPage :: Gtk.Notebook -> IORef Int -> IO ()
-addPage notebook pageNumber = do
+addPage :: Gtk.Notebook -> IO ()
+addPage notebook = do
       surfaceRef <- newIORef Nothing
       lastPosRef <- newIORef Nothing
       isDrawingRef <- newIORef False
-      pg <- readIORef pageNumber
-      pageLabel <- new Gtk.Label [ #label := pack $ "Page " ++ show pg]
-      writeIORef pageNumber (pg + 1)
+      pg <- Gtk.notebookGetNPages notebook
+      pageLabel <- new Gtk.Label [ #label := pack $ "Page " ++ show (pg + 1)]
       drawingArea <- new Gtk.DrawingArea 
         [ #widthRequest := pageWidth
         , #heightRequest := pageHeight
@@ -145,20 +144,33 @@ addPage notebook pageNumber = do
         ]
       #showAll notebook
 
+resetNotebookLabels :: Gtk.Notebook -> IO ()
+resetNotebookLabels notebook = do
+  nPages <- Gtk.notebookGetNPages notebook
+  mapM_ (updatePageLabel notebook) [0..fromIntegral nPages - 1]
+
+updatePageLabel :: Gtk.Notebook -> Int -> IO ()
+updatePageLabel notebook pageIndex = do
+  let newLabel = pack $ "Page " ++ show (pageIndex + 1)
+  maybePageWidget <- Gtk.notebookGetNthPage notebook (fromIntegral pageIndex)
+  case maybePageWidget of
+    Nothing -> return () 
+    Just pageWidget -> do
+      label <- Gtk.labelNew (Just newLabel)
+      Gtk.notebookSetTabLabel notebook pageWidget (Just label)
+
 removePage :: Gtk.Notebook -> IO ()
 removePage notebook = do 
   currentPage <- Gtk.notebookGetCurrentPage notebook
   Gtk.notebookRemovePage notebook currentPage
+  resetNotebookLabels notebook
 
 {- Initialise and setup drawingArea and Window etc -}
 
 activate :: Gtk.Application -> ApplicationActivateCallback
 activate app = do
   notebook <- new Gtk.Notebook []
-  pageNumber <- newIORef 1
-  readIORef pageNumber >>= \pg -> do
-    addPage notebook pageNumber
-    writeIORef pageNumber (pg + 1)
+  addPage notebook
   scrolledWin <- new Gtk.ScrolledWindow 
     [ #hscrollbarPolicy := Gtk.PolicyTypeAutomatic
     , #vscrollbarPolicy := Gtk.PolicyTypeAutomatic
@@ -174,7 +186,7 @@ activate app = do
     , #defaultHeight := 1000
     ]
   addPageButton <- new Gtk.Button [ #label := "Add Page" 
-                                  , On #clicked (addPage notebook pageNumber)
+                                  , On #clicked (addPage notebook)
                                   ]
   removePageButton <- new Gtk.Button [ #label := "Delete Current Page" 
                                      , On #clicked (removePage notebook)
