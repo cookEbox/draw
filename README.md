@@ -22,3 +22,9 @@ work flow.
         - [x] A button that removes the current page 
         - [x] Adjust IORef to have new count
         - [x] Rename all labels 
+
+7.  [ ] Rubber 
+        - [ ] right click menu 
+            - [ ] draw button 
+            - [ ] rubber button 
+        - [ ] set colour function
