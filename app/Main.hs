@@ -170,6 +170,7 @@ removePage notebook = do
 activate :: Gtk.Application -> ApplicationActivateCallback
 activate app = do
   notebook <- new Gtk.Notebook []
+  #setTabPos notebook Gtk.PositionTypeLeft
   addPage notebook
   scrolledWin <- new Gtk.ScrolledWindow 
     [ #hscrollbarPolicy := Gtk.PolicyTypeAutomatic

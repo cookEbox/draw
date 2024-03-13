@@ -9,7 +9,7 @@ work flow.
 3.  [x] Resizable window 
 4.  [x] Add Pages Button
 5.  [x] Remove Pages Button
-6.  [ ] Change page labels to horizontal tabs
+6.  [x] Change page labels to horizontal tabs
 7.  [ ] Rubber 
 8.  [ ] A simple question generator
 9.  [ ] Resizable drawing area for monitor size 
