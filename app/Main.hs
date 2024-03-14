@@ -119,6 +119,9 @@ initialiseSurface surfaceRef = do
 
 addPage :: Gtk.Notebook -> IO ()
 addPage notebook = do
+      -- this is where the right click menu should be initialised
+      -- so there is a menu on each drawing area
+      -- as well as the IORef app state
       surfaceRef <- newIORef Nothing
       lastPosRef <- newIORef Nothing
       isDrawingRef <- newIORef False

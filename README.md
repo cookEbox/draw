@@ -24,7 +24,13 @@ work flow.
         - [x] Rename all labels 
 
 7.  [ ] Rubber 
+        - [ ] move all IORef to a single type 
+            - make pen colour and background colour part of this type as well
         - [ ] right click menu 
             - [ ] draw button 
+                - change to default draw size 
+                - change to default draw colour
             - [ ] rubber button 
+                - change to default rubber size 
+                - change to default rubber colour
         - [ ] set colour function
