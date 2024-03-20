@@ -11,11 +11,9 @@ work flow.
 5.  [x] Remove Pages Button
 6.  [x] Change page labels to horizontal tabs
 7.  [ ] Rubber 
-8.  [ ] A simple question generator
-9.  [ ] Resizable drawing area for monitor size 
-10. [ ] Keep buttons visible
-11. [ ] Save page 
-12. [ ] Save all pages
+8.  [ ] Insert Page
+9.  [ ] Change from vbox to grid
+10. [ ] A simple question generator
 
 ### Subtasks
 5.  [x] Remove Pages Button
@@ -34,3 +32,8 @@ work flow.
                 - change to default rubber size 
                 - change to default rubber colour
         - [ ] set colour function
+
+## Future Tasks 
+Save page 
+Save all pages
+Resizable drawing area for monitor size 
