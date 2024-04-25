@@ -21,11 +21,18 @@ import           System.Exit
 
 {- Basic settings -}
 
+data Color = Default | White | Blue | Red | Green | Black deriving (Show, Eq)
+
 backGroundColor :: Ren.Render ()
 backGroundColor = Ren.setSourceRGB 0 0 0
 
-penColor :: Ren.Render ()
-penColor = Ren.setSourceRGB 255 255 255
+penColor :: Color -> Ren.Render ()
+penColor Default = Ren.setSourceRGB 255 255 255
+penColor White = Ren.setSourceRGB 255 255 255
+penColor Blue = Ren.setSourceRGB 0 0 255
+penColor Red = Ren.setSourceRGB 255 0 0 
+penColor Green = Ren.setSourceRGB 0 255 0 
+penColor Black = Ren.setSourceRGB 0 0 0 
 
 pageWidth, pageHeight :: Integral a => a 
 pageWidth = 2200
@@ -47,15 +54,18 @@ handleDraw surfaceRef _ cairoContext = do
 
 {- Handling Drawing from mouse being clicked and dragged -}
 
-updateSurface :: IORef (Maybe (Double, Double))
+updateSurface :: IORef Color 
+              -> IORef (Maybe (Double, Double))
               -> Ren.Surface 
               -> Double 
               -> Double 
               -> IO ()
-updateSurface lastPosRef surface newX newY = do
+updateSurface penColorRef lastPosRef surface newX newY = do
+  color <- readIORef penColorRef
+  let penSize = (if color == Black then 10 else 2)
   Ren.renderWith surface $ do
-      Ren.setLineWidth 2
-      penColor
+      Ren.setLineWidth penSize
+      penColor color
       lastPos <- Ren.liftIO $ readIORef lastPosRef
       case lastPos of
         Just (lastX, lastY) -> do
@@ -85,15 +95,16 @@ motionNotify :: Gdk.EventMotion
              -> IORef (Maybe Ren.Surface) 
              -> IORef (Maybe (Double, Double))
              -> IORef Bool 
+             -> IORef Color
              -> Gtk.DrawingArea 
              -> IO Bool
-motionNotify event surfaceRef lastPosRef isDrawingRef drawingArea = do
+motionNotify event surfaceRef lastPosRef isDrawingRef penColorRef drawingArea = do
     isDrawing <- readIORef isDrawingRef
     when isDrawing $ do
       x <- get event #x
       y <- get event #y
       surface <- fromJust <$> readIORef surfaceRef
-      updateSurface lastPosRef surface x y
+      updateSurface penColorRef lastPosRef surface x y
       #queueDraw drawingArea -- Request a redraw
     return True
 
@@ -104,11 +115,29 @@ realize surfaceRef = do
   writeIORef surfaceRef (Just surface)
   return ()
 
-rightClickMenu :: IORef Bool -> IO Gtk.Menu
-rightClickMenu isDrawingRef = do 
+rightClickMenu :: IORef Bool -> IORef Color -> IO Gtk.Menu
+rightClickMenu isDrawingRef penColorRef = do 
   menu <- new Gtk.Menu [ On #hide $ writeIORef isDrawingRef False] 
-  menuItem <- new Gtk.MenuItem [ #label := "Menu Item 1" ]
-  #add menu menuItem 
+  white <- new Gtk.MenuItem [ #label := "White" 
+                            , On #activate $ writeIORef penColorRef White 
+                            ]
+  red <- new Gtk.MenuItem   [ #label := "Red" 
+                            , On #activate $ writeIORef penColorRef Red 
+                            ]
+  blue <- new Gtk.MenuItem [ #label := "Blue" 
+                            , On #activate $ writeIORef penColorRef Blue 
+                            ]
+  green <- new Gtk.MenuItem [ #label := "Green" 
+                            , On #activate $ writeIORef penColorRef Green 
+                            ]
+  rubber <- new Gtk.MenuItem [ #label := "Rubber" 
+                            , On #activate $ writeIORef penColorRef Black 
+                             ]
+  #add menu white
+  #add menu red
+  #add menu blue
+  #add menu green
+  #add menu rubber
   #showAll menu
   return menu
 
@@ -143,9 +172,10 @@ addPage notebook = do
       surfaceRef <- newIORef Nothing
       lastPosRef <- newIORef Nothing
       isDrawingRef <- newIORef False
+      penColorRef <- newIORef White
       pg <- Gtk.notebookGetNPages notebook
       pageLabel <- new Gtk.Label [ #label := pack $ "Page " ++ show (pg + 1)]
-      menu <- rightClickMenu isDrawingRef
+      menu <- rightClickMenu isDrawingRef penColorRef
       drawingArea <- new Gtk.DrawingArea 
         [ #widthRequest := pageWidth
         , #heightRequest := pageHeight
@@ -155,7 +185,7 @@ addPage notebook = do
         , On #buttonReleaseEvent $ \event 
           -> buttonRelease event isDrawingRef lastPosRef
         , On #motionNotifyEvent $ \event 
-          -> motionNotify event surfaceRef lastPosRef isDrawingRef ?self
+          -> motionNotify event surfaceRef lastPosRef isDrawingRef penColorRef ?self
         , On #buttonPressEvent $ \event 
           -> rightClickNotify event menu 
         , On #realize $ realize surfaceRef
