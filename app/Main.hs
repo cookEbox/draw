@@ -21,6 +21,8 @@ import           System.Exit
 
 {- Basic settings -}
 
+data NewPage = Append | InsertBefore | InsertAfter deriving Eq
+
 data Color = Default | White | Blue | Red | Green | Black deriving (Show, Eq)
 
 backGroundColor :: Ren.Render ()
@@ -164,17 +166,15 @@ initialiseSurface surfaceRef = do
         return ()
     return ()
 
-addPage :: Gtk.Notebook -> IO ()
-addPage notebook = do
-      -- this is where the right click menu should be initialised
-      -- so there is a menu on each drawing area
-      -- as well as the IORef app state
+addPage :: NewPage -> Gtk.Notebook -> IO ()
+addPage addOrInsert notebook = do
       surfaceRef <- newIORef Nothing
       lastPosRef <- newIORef Nothing
       isDrawingRef <- newIORef False
       penColorRef <- newIORef White
       pg <- Gtk.notebookGetNPages notebook
       pageLabel <- new Gtk.Label [ #label := pack $ "Page " ++ show (pg + 1)]
+      currentPosition <- Gtk.notebookGetCurrentPage notebook 
       menu <- rightClickMenu isDrawingRef penColorRef
       drawingArea <- new Gtk.DrawingArea 
         [ #widthRequest := pageWidth
@@ -190,7 +190,11 @@ addPage notebook = do
           -> rightClickNotify event menu 
         , On #realize $ realize surfaceRef
         ]
-      _ <- Gtk.notebookAppendPage notebook drawingArea (Just pageLabel)
+      _ <- case addOrInsert of 
+        Append -> Gtk.notebookAppendPage notebook drawingArea (Just pageLabel)
+        InsertAfter -> Gtk.notebookInsertPage notebook drawingArea (Just pageLabel) (currentPosition + 1)
+        InsertBefore -> Gtk.notebookInsertPage notebook drawingArea (Just pageLabel) currentPosition 
+      resetNotebookLabels notebook
       #addEvents drawingArea 
         [ Gdk.EventMaskButtonPressMask
         , Gdk.EventMaskPointerMotionMask
@@ -225,7 +229,7 @@ activate :: Gtk.Application -> ApplicationActivateCallback
 activate app = do
   notebook <- new Gtk.Notebook []
   #setTabPos notebook Gtk.PositionTypeLeft
-  addPage notebook
+  addPage Append notebook
   scrolledWin <- new Gtk.ScrolledWindow 
     [ #hscrollbarPolicy := Gtk.PolicyTypeAutomatic
     , #vscrollbarPolicy := Gtk.PolicyTypeAutomatic
@@ -241,13 +245,21 @@ activate app = do
     , #defaultHeight := 1000
     ]
   addPageButton <- new Gtk.Button [ #label := "Add Page" 
-                                  , On #clicked (addPage notebook)
+                                  , On #clicked (addPage Append notebook)
+                                  ]
+  insertBeforeButton <- new Gtk.Button [ #label := "Insert Page Before" 
+                                  , On #clicked (addPage InsertBefore notebook)
+                                  ]
+  insertAfterButton <- new Gtk.Button [ #label := "Insert Page After" 
+                                  , On #clicked (addPage InsertAfter notebook)
                                   ]
   removePageButton <- new Gtk.Button [ #label := "Delete Current Page" 
                                      , On #clicked (removePage notebook)
                                      ]
 
   #packStart vbox addPageButton False False 0
+  #packStart vbox insertBeforeButton False False 0
+  #packStart vbox insertAfterButton False False 0
   #packStart vbox removePageButton False False 0
   #packStart vbox scrolledWin True True 0
 
