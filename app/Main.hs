@@ -104,6 +104,24 @@ realize surfaceRef = do
   writeIORef surfaceRef (Just surface)
   return ()
 
+rightClickMenu :: IORef Bool -> IO Gtk.Menu
+rightClickMenu isDrawingRef = do 
+  menu <- new Gtk.Menu [ On #hide $ writeIORef isDrawingRef False] 
+  menuItem <- new Gtk.MenuItem [ #label := "Menu Item 1" ]
+  #add menu menuItem 
+  #showAll menu
+  return menu
+
+rightClickNotify :: Gdk.EventButton -> Gtk.Menu -> IO Bool
+rightClickNotify event menu = do 
+  button <- get event #button 
+  case button of 
+    3 -> do -- Right-click is button 3
+         Gtk.menuPopupAtPointer menu Nothing 
+         return True 
+    _ -> return False
+
+
 {- Start a surface on the activation of the app -}
 
 initialiseSurface :: IORef (Maybe Ren.Surface) -> IO ()
@@ -127,6 +145,7 @@ addPage notebook = do
       isDrawingRef <- newIORef False
       pg <- Gtk.notebookGetNPages notebook
       pageLabel <- new Gtk.Label [ #label := pack $ "Page " ++ show (pg + 1)]
+      menu <- rightClickMenu isDrawingRef
       drawingArea <- new Gtk.DrawingArea 
         [ #widthRequest := pageWidth
         , #heightRequest := pageHeight
@@ -137,6 +156,8 @@ addPage notebook = do
           -> buttonRelease event isDrawingRef lastPosRef
         , On #motionNotifyEvent $ \event 
           -> motionNotify event surfaceRef lastPosRef isDrawingRef ?self
+        , On #buttonPressEvent $ \event 
+          -> rightClickNotify event menu 
         , On #realize $ realize surfaceRef
         ]
       _ <- Gtk.notebookAppendPage notebook drawingArea (Just pageLabel)

@@ -10,10 +10,11 @@ work flow.
 4.  [x] Add Pages Button
 5.  [x] Remove Pages Button
 6.  [x] Change page labels to horizontal tabs
-7.  [ ] Rubber 
+7.  [ ] Rubber & Pen Colour
 8.  [ ] Insert Page
 9.  [ ] Change from vbox to grid
 10. [ ] A simple question generator
+11. [ ] Refactor
 
 ### Subtasks
 5.  [x] Remove Pages Button
@@ -21,17 +22,19 @@ work flow.
         - [x] Adjust IORef to have new count
         - [x] Rename all labels 
 
-7.  [ ] Rubber 
-        - [ ] move all IORef to a single type 
-            - make pen colour and background colour part of this type as well
+7.  [ ] Rubber & Pen Colour
         - [ ] right click menu 
+            - [x] menu appear
             - [ ] draw button 
                 - change to default draw size 
                 - change to default draw colour
             - [ ] rubber button 
                 - change to default rubber size 
                 - change to default rubber colour
-        - [ ] set colour function
+            - [ ] set colour function
+
+11. [ ] Refactor Code
+        - [ ] move all IORef to a single type 
 
 ## Future Tasks 
 Save page 
