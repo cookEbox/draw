@@ -236,6 +236,7 @@ activate app = do
     , #child := notebook
     ]
   vbox <- new Gtk.Box [ #orientation := Gtk.OrientationVertical ]
+  hbox <- new Gtk.Box [ #orientation := Gtk.OrientationHorizontal ]
   win <- new Gtk.ApplicationWindow 
     [ #application := app
     , #title := "Drawing Area"
@@ -257,10 +258,11 @@ activate app = do
                                      , On #clicked (removePage notebook)
                                      ]
 
-  #packStart vbox addPageButton False False 0
-  #packStart vbox insertBeforeButton False False 0
-  #packStart vbox insertAfterButton False False 0
-  #packStart vbox removePageButton False False 0
+  #packStart vbox hbox False False 0
+  #packStart hbox addPageButton False False 0
+  #packStart hbox insertBeforeButton False False 0
+  #packStart hbox insertAfterButton False False 0
+  #packStart hbox removePageButton False False 0
   #packStart vbox scrolledWin True True 0
 
   #showAll win

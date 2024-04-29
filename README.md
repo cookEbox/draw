@@ -12,7 +12,7 @@ work flow.
 6.  [x] Change page labels to horizontal tabs
 7.  [x] Rubber & Pen Colour
 8.  [x] Insert Page
-9.  [ ] Change from vbox to grid
+9.  [x] Change from vbox to hbox for buttons
 10. [ ] A simple question generator
 11. [ ] Refactor
 
@@ -28,6 +28,12 @@ work flow.
             - [x] draw button 
             - [x] rubber button 
             - [x] set colour function
+
+10. [ ] A simple question generator
+        - [ ] make a notepad appear as a floating window with two tabs
+        - [ ] make the floating notepad closeable
+        - [ ] print questions to the first tab 
+        - [ ] print answers to the second tab
 
 11. [ ] Refactor Code
         - [ ] move all IORef to a single type 
