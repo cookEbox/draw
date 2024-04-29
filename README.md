@@ -3,6 +3,8 @@
 Draw is a first attempt to produce a PPT clone aimed to fit a Mathematics Teachers
 work flow.
 
+## Phase 0.1.0
+
 ## Tasks
 1.  [x] A Drawable interface 
 2.  [x] Multiple Pages 
@@ -44,3 +46,4 @@ Save all pages
 Resizable drawing area for monitor size 
 Changing size of rubber and drawing Pen
 Clear annotations
+Move to new page when adding page

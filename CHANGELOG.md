@@ -1,4 +1,46 @@
-commit 286c38427dbcbdbca6c8490c912c6d4ff1a7c7ab (HEAD -> main)
+commit 9d9bb208fe9a7637de21c94857afd70ddfbf2c6c (HEAD -> main, tag: v0.1.0.9)
+Author: Nick Cooke <nj.cooke@outlook.com>
+Date:   Mon Apr 29 22:23:42 2024 +0100
+
+    changed the vbox to include a hbox for buttons to run along the top
+
+commit 2ccc6d50a0179e420ceb49fd6b7ea29d896eb79c (tag: v0.1.0.8)
+Author: Nick Cooke <nj.cooke@outlook.com>
+Date:   Thu Apr 25 16:45:53 2024 +0100
+
+    Insert Pages before and after current
+
+commit dd1b6489fc01f04ee0e1722071d43ecde55f63e0 (tag: v0.1.0.7)
+Author: Nick Cooke <nj.cooke@outlook.com>
+Date:   Thu Apr 25 16:07:21 2024 +0100
+
+    Minor updates to cabal file
+
+commit 6f3386e8c2445b5501417bddcaf04da4aa9dafe3
+Author: Nick Cooke <nj.cooke@outlook.com>
+Date:   Thu Apr 25 16:05:40 2024 +0100
+
+    Right click menu changes pen colour allows for a rubber
+
+commit 22acdf7197668e79c3200f65e99b1649e71f92a8
+Author: Nick Cooke <nj.cooke@outlook.com>
+Date:   Thu Apr 25 15:23:09 2024 +0100
+
+    minor tweaks to README and rightclick menu added
+
+commit ff4d5a5fda81920d75c795ca7cb830b9120d9960
+Author: Nick Cooke <nj.cooke@outlook.com>
+Date:   Wed Mar 20 13:59:02 2024 +0000
+
+    Just checking git will use nvim now
+
+commit b2d0b576037e8aa3999dab7825d94a0861b56d64
+Author: Nick Cooke <nj.cooke@outlook.com>
+Date:   Thu Mar 14 21:48:34 2024 +0000
+
+    CHANGELOG.md not included in git broke so using to store most recent git log
+
+commit 286c38427dbcbdbca6c8490c912c6d4ff1a7c7ab
 Author: Nick Cooke <nj.cooke@outlook.com>
 Date:   Thu Mar 14 21:47:02 2024 +0000
 
