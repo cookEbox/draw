@@ -12,7 +12,6 @@ import qualified GI.Cairo.Render.Connector as Con
 import qualified GI.Gdk                    as Gdk
 import           GI.Gio
 import qualified GI.Gtk                    as Gtk
-import           SharedFunctions
 
 {- Handling Draw Trigger -}
 
