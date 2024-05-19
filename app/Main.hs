@@ -9,7 +9,7 @@ import           Control.Monad             (when)
 import           Data.IORef                (IORef, newIORef, readIORef,
                                             writeIORef)
 import           Data.Maybe                (fromJust)
-import           Data.Text                 (pack)
+import           Data.Text                 (pack, Text)
 import qualified GI.Cairo                  as Cairo
 import qualified GI.Cairo.Render           as Ren
 import qualified GI.Cairo.Render.Connector as Con
@@ -20,6 +20,9 @@ import           System.Environment
 import           System.Exit
 
 {- Basic settings -}
+
+question :: String
+question = "1 + 1"
 
 data NewPage = Append | InsertBefore | InsertAfter deriving Eq
 
@@ -117,29 +120,57 @@ realize surfaceRef = do
   writeIORef surfaceRef (Just surface)
   return ()
 
-rightClickMenu :: IORef Bool -> IORef Color -> IO Gtk.Menu
-rightClickMenu isDrawingRef penColorRef = do 
+createFloatingNotepad :: Gtk.Application -> IO ()
+createFloatingNotepad app = do 
+  vbox <- new Gtk.Box [ #orientation := Gtk.OrientationVertical ]
+  floatingWindow <- new Gtk.Window [ #title := "Question Window" 
+                                   , #child := vbox 
+                                   ]
+  #setTransientFor floatingWindow =<< Gtk.applicationGetActiveWindow app
+  #setDefaultSize floatingWindow 300 200 
+  notebook <- new Gtk.Notebook [] 
+  printQuestion <- new Gtk.Button [ #label := "Print Questions" 
+                                  ]
+  #packStart vbox printQuestion False False 0
+  #packStart vbox notebook True True 0
+  -- Create several tabs with drawing areas 
+  mapM_ (addDrawingAreaTab notebook) ["Questions", "Answers"]
+  #showAll floatingWindow
+
+addDrawingAreaTab :: Gtk.Notebook -> Text -> IO () 
+addDrawingAreaTab notebook label = do 
+  drawingArea <- new Gtk.DrawingArea [] 
+  labelWidget <- new Gtk.Label [#label := label]
+  _ <- Gtk.notebookAppendPage notebook drawingArea (Just labelWidget)
+  #showAll drawingArea
+
+rightClickMenu :: IORef Bool -> IORef Color -> Gtk.Application -> IO Gtk.Menu
+rightClickMenu isDrawingRef penColorRef app = do 
   menu <- new Gtk.Menu [ On #hide $ writeIORef isDrawingRef False] 
-  white <- new Gtk.MenuItem [ #label := "White" 
-                            , On #activate $ writeIORef penColorRef White 
-                            ]
-  red <- new Gtk.MenuItem   [ #label := "Red" 
-                            , On #activate $ writeIORef penColorRef Red 
-                            ]
-  blue <- new Gtk.MenuItem [ #label := "Blue" 
-                            , On #activate $ writeIORef penColorRef Blue 
-                            ]
-  green <- new Gtk.MenuItem [ #label := "Green" 
-                            , On #activate $ writeIORef penColorRef Green 
-                            ]
-  rubber <- new Gtk.MenuItem [ #label := "Rubber" 
-                            , On #activate $ writeIORef penColorRef Black 
-                             ]
+  white <- new Gtk.MenuItem     [ #label := "White" 
+                                , On #activate $ writeIORef penColorRef White 
+                                ]
+  red <- new Gtk.MenuItem       [ #label := "Red" 
+                                , On #activate $ writeIORef penColorRef Red 
+                                ]
+  blue <- new Gtk.MenuItem      [ #label := "Blue" 
+                                , On #activate $ writeIORef penColorRef Blue 
+                                ]
+  green <- new Gtk.MenuItem     [ #label := "Green" 
+                                , On #activate $ writeIORef penColorRef Green 
+                                ]
+  rubber <- new Gtk.MenuItem    [ #label := "Rubber" 
+                                , On #activate $ writeIORef penColorRef Black 
+                                ]
+  questions <- new Gtk.MenuItem [ #label := "Questions"
+                                , On #activate $ createFloatingNotepad app
+                                ]
   #add menu white
   #add menu red
   #add menu blue
   #add menu green
   #add menu rubber
+  #add menu questions
   #showAll menu
   return menu
 
@@ -166,8 +197,8 @@ initialiseSurface surfaceRef = do
         return ()
     return ()
 
-addPage :: NewPage -> Gtk.Notebook -> IO ()
-addPage addOrInsert notebook = do
+addPage :: NewPage -> Gtk.Notebook -> Gtk.Application -> IO ()
+addPage addOrInsert notebook app = do
       surfaceRef <- newIORef Nothing
       lastPosRef <- newIORef Nothing
       isDrawingRef <- newIORef False
@@ -175,7 +206,7 @@ addPage addOrInsert notebook = do
       pg <- Gtk.notebookGetNPages notebook
       pageLabel <- new Gtk.Label [ #label := pack $ "Page " ++ show (pg + 1)]
       currentPosition <- Gtk.notebookGetCurrentPage notebook 
-      menu <- rightClickMenu isDrawingRef penColorRef
+      menu <- rightClickMenu isDrawingRef penColorRef app
       drawingArea <- new Gtk.DrawingArea 
         [ #widthRequest := pageWidth
         , #heightRequest := pageHeight
@@ -229,7 +260,7 @@ activate :: Gtk.Application -> ApplicationActivateCallback
 activate app = do
   notebook <- new Gtk.Notebook []
   #setTabPos notebook Gtk.PositionTypeLeft
-  addPage Append notebook
+  addPage Append notebook app
   scrolledWin <- new Gtk.ScrolledWindow 
     [ #hscrollbarPolicy := Gtk.PolicyTypeAutomatic
     , #vscrollbarPolicy := Gtk.PolicyTypeAutomatic
@@ -246,13 +277,13 @@ activate app = do
     , #defaultHeight := 1000
     ]
   addPageButton <- new Gtk.Button [ #label := "Add Page" 
-                                  , On #clicked (addPage Append notebook)
+                                  , On #clicked (addPage Append notebook app)
                                   ]
   insertBeforeButton <- new Gtk.Button [ #label := "Insert Page Before" 
-                                  , On #clicked (addPage InsertBefore notebook)
+                                  , On #clicked (addPage InsertBefore notebook app)
                                   ]
   insertAfterButton <- new Gtk.Button [ #label := "Insert Page After" 
-                                  , On #clicked (addPage InsertAfter notebook)
+                                  , On #clicked (addPage InsertAfter notebook app)
                                   ]
   removePageButton <- new Gtk.Button [ #label := "Delete Current Page" 
                                      , On #clicked (removePage notebook)

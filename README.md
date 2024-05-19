@@ -15,8 +15,9 @@ work flow.
 7.  [x] Rubber & Pen Colour
 8.  [x] Insert Page
 9.  [x] Change from vbox to hbox for buttons
-10. [ ] A simple question generator
+10. [x] Pop up window for questions
 11. [ ] Refactor
+12. [ ] Question Generator
 
 ### Subtasks
 5.  [x] Remove Pages Button
@@ -31,15 +32,16 @@ work flow.
             - [x] rubber button 
             - [x] set colour function
 
-10. [ ] A simple question generator
-        - [ ] make a notepad appear as a floating window with two tabs
-        - [ ] make the floating notepad closeable
-        - [ ] print questions to the first tab 
-        - [ ] print answers to the second tab
+10. [x] Pop up window for questions
+        - [x] make a notepad appear as a floating window with two tabs
+        - [x] make the floating notepad closeable
 
 11. [ ] Refactor Code
         - [ ] move all IORef to a single type 
 
+12. [ ] Question Generator
+        - [ ] print questions to the first tab 
+        - [ ] print answers to the second tab
 ## Future Tasks 
 Save page 
 Save all pages
