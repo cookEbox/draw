@@ -6,9 +6,8 @@ work flow.
 ## Phase 0.1.0
 
 ## Tasks
-1. 
+### 1
 - [x] A Drawable interface 
-
 ### 2
 - [x] Multiple Pages 
 ### 3
@@ -47,6 +46,9 @@ work flow.
     - [ ] print questions to the first tab 
     - [ ] print answers to the second tab
 
+1. This is number one
+    1. This is sub one 
+    2. This is sub two
 ## Future Tasks 
 - Save page 
 - Save all pages
