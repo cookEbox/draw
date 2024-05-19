@@ -37,11 +37,14 @@ work flow.
         - [x] make the floating notepad closeable
 
 11. [ ] Refactor Code
+        - [x] serperate into modules
         - [ ] move all IORef to a single type 
 
 12. [ ] Question Generator
+        - [ ] print to a tab in the floating window
         - [ ] print questions to the first tab 
         - [ ] print answers to the second tab
+
 ## Future Tasks 
 Save page 
 Save all pages
