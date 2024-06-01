@@ -28,12 +28,17 @@ updatePageLabel notebook pageIndex = do
       label <- Gtk.labelNew (Just newLabel)
       Gtk.notebookSetTabLabel notebook pageWidget (Just label)
 
-data NewPage = Append | InsertBefore | InsertAfter deriving (Eq)
+data NewPage = Append | InsertBefore | InsertAfter
+  deriving (Eq)
 
 addPage :: NewPage -> Gtk.Notebook -> Gtk.Application -> IO ()
 addPage addOrInsert notebook app = do
   surfaceRef <- newIORef Nothing
-  stateRef <- newIORef $ State { getLastPos = Nothing, getIsDrawing = False, getPenColor = White }
+  stateRef <- newIORef $ State
+                       { getLastPos = Nothing
+                       , getIsDrawing = False
+                       , getPenColor = White
+                       }
   pg <- Gtk.notebookGetNPages notebook
   pageLabel <- new Gtk.Label [#label := pack $ "Page " ++ show (pg + 1)]
   currentPosition <- Gtk.notebookGetCurrentPage notebook
