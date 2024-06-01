@@ -25,3 +25,8 @@ pageWidth, pageHeight :: Integral a => a
 pageWidth = 2200
 pageHeight = 1300
 
+data State = State 
+  { getLastPos :: Maybe (Double, Double)
+  , getIsDrawing :: Bool
+  , getPenColor :: Color
+  }

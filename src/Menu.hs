@@ -3,7 +3,7 @@
 module Menu where
 
 import           BasicSettings
-import           Data.IORef    (IORef, writeIORef)
+import           Data.IORef    (IORef, writeIORef, readIORef)
 import           Data.Text     (Text)
 import           GI.Gio
 import qualified GI.Gtk        as Gtk
@@ -32,23 +32,24 @@ addDrawingAreaTab notebook label = do
   _ <- Gtk.notebookAppendPage notebook drawingArea (Just labelWidget)
   #showAll drawingArea
 
-rightClickMenu :: IORef Bool -> IORef Color -> Gtk.Application -> IO Gtk.Menu
-rightClickMenu isDrawingRef penColorRef app = do
-  menu <- new Gtk.Menu [ On #hide $ writeIORef isDrawingRef False]
+rightClickMenu :: IORef State -> Gtk.Application -> IO Gtk.Menu
+rightClickMenu stateRef app = do
+  state <- readIORef stateRef
+  menu <- new Gtk.Menu [ On #hide $ writeIORef stateRef (newDrawingState state) ]
   white <- new Gtk.MenuItem     [ #label := "White"
-                                , On #activate $ writeIORef penColorRef White
+                                , On #activate $ writeIORef stateRef (newPenColor state White)
                                 ]
   red <- new Gtk.MenuItem       [ #label := "Red"
-                                , On #activate $ writeIORef penColorRef Red
+                                , On #activate $ writeIORef stateRef (newPenColor state Red)
                                 ]
   blue <- new Gtk.MenuItem      [ #label := "Blue"
-                                , On #activate $ writeIORef penColorRef Blue
+                                , On #activate $ writeIORef stateRef (newPenColor state Blue)
                                 ]
   green <- new Gtk.MenuItem     [ #label := "Green"
-                                , On #activate $ writeIORef penColorRef Green
+                                , On #activate $ writeIORef stateRef (newPenColor state Green)
                                 ]
   rubber <- new Gtk.MenuItem    [ #label := "Rubber"
-                                , On #activate $ writeIORef penColorRef Black
+                                , On #activate $ writeIORef stateRef (newPenColor state Black)
                                 ]
   questions <- new Gtk.MenuItem [ #label := "Questions"
                                 , On #activate $ createFloatingNotepad app
@@ -61,4 +62,6 @@ rightClickMenu isDrawingRef penColorRef app = do
   #add menu questions
   #showAll menu
   return menu
+    where newDrawingState st = st { getIsDrawing = False }
+          newPenColor st cl = st { getPenColor = cl }
 

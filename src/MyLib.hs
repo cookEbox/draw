@@ -33,13 +33,11 @@ data NewPage = Append | InsertBefore | InsertAfter deriving (Eq)
 addPage :: NewPage -> Gtk.Notebook -> Gtk.Application -> IO ()
 addPage addOrInsert notebook app = do
   surfaceRef <- newIORef Nothing
-  lastPosRef <- newIORef Nothing
-  isDrawingRef <- newIORef False
-  penColorRef <- newIORef White
+  stateRef <- newIORef $ State { getLastPos = Nothing, getIsDrawing = False, getPenColor = White }
   pg <- Gtk.notebookGetNPages notebook
   pageLabel <- new Gtk.Label [#label := pack $ "Page " ++ show (pg + 1)]
   currentPosition <- Gtk.notebookGetCurrentPage notebook
-  menu <- rightClickMenu isDrawingRef penColorRef app
+  menu <- rightClickMenu stateRef app
   drawingArea <-
     new
       Gtk.DrawingArea
@@ -47,11 +45,11 @@ addPage addOrInsert notebook app = do
       , #heightRequest := pageHeight
       , On #draw $ handleDraw surfaceRef ?self
       , On #buttonPressEvent $ \event ->
-          buttonPress event isDrawingRef
+          buttonPress event stateRef
       , On #buttonReleaseEvent $ \event ->
-          buttonRelease event isDrawingRef lastPosRef
+          buttonRelease event stateRef
       , On #motionNotifyEvent $ \event ->
-          motionNotify event surfaceRef lastPosRef isDrawingRef penColorRef ?self
+          motionNotify event surfaceRef stateRef ?self
       , On #buttonPressEvent $ \event ->
           rightClickNotify event menu
       , On #realize $ realize surfaceRef

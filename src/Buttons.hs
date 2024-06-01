@@ -29,59 +29,63 @@ handleDraw surfaceRef _ cairoContext = do
 
 {- Handling Drawing from mouse being clicked and dragged -}
 
-updateSurface :: IORef Color
-              -> IORef (Maybe (Double, Double))
+updateSurface :: IORef State
               -> Ren.Surface
               -> Double
               -> Double
               -> IO ()
-updateSurface penColorRef lastPosRef surface newX newY = do
-  color <- readIORef penColorRef
+-- updateSurface penColorRef lastPosRef surface newX newY = do
+updateSurface stateRef surface newX newY = do
+  state <- readIORef stateRef
+  let color = getPenColor state
+  let lastPos = getLastPos state
   let penSize = (if color == Black then 10 else 2)
   Ren.renderWith surface $ do
       Ren.setLineWidth penSize
       penColor color
-      lastPos <- Ren.liftIO $ readIORef lastPosRef
+      -- lastPos <- Ren.liftIO $ readIORef lastPosRef
       case lastPos of
         Just (lastX, lastY) -> do
           Ren.moveTo lastX lastY
           Ren.lineTo newX newY
         Nothing -> Ren.moveTo newX newY
       Ren.stroke
-  writeIORef lastPosRef (Just (newX, newY))
+  let newState = state { getLastPos = Just (newX, newY)}
+  writeIORef stateRef newState
 
 {- Handle all the on drawingArea commands -}
 
-buttonPress :: Gdk.EventButton -> IORef Bool -> IO Bool
-buttonPress _ isDrawingRef = do
-  writeIORef isDrawingRef True
+buttonPress :: Gdk.EventButton -> IORef State -> IO Bool
+buttonPress _ stateRef = do
+  state <- readIORef stateRef
+  let newState = state { getIsDrawing = True }
+  writeIORef stateRef newState
   return False
 
 buttonRelease :: Gdk.EventButton
-              -> IORef Bool
-              -> IORef (Maybe (Double, Double))
+              -> IORef State
               -> IO Bool
-buttonRelease _ isDrawingRef lastPosRef = do
-  writeIORef isDrawingRef False
-  writeIORef lastPosRef Nothing
+buttonRelease _ stateRef = do
+  state <- readIORef stateRef
+  let newState = state { getIsDrawing = False, getLastPos = Nothing }
+  writeIORef stateRef newState
   return False
 
 motionNotify :: Gdk.EventMotion
              -> IORef (Maybe Ren.Surface)
-             -> IORef (Maybe (Double, Double))
-             -> IORef Bool
-             -> IORef Color
+             -> IORef State
              -> Gtk.DrawingArea
              -> IO Bool
-motionNotify event surfaceRef lastPosRef isDrawingRef penColorRef drawingArea = do
-    isDrawing <- readIORef isDrawingRef
-    when isDrawing $ do
-      x <- get event #x
-      y <- get event #y
-      surface <- fromJust <$> readIORef surfaceRef
-      updateSurface penColorRef lastPosRef surface x y
-      #queueDraw drawingArea -- Request a redraw
-    return True
+motionNotify event surfaceRef stateRef drawingArea = do
+  -- isDrawing <- readIORef isDrawingRef
+  state <- readIORef stateRef
+  when (getIsDrawing state) $ do
+    x <- get event #x
+    y <- get event #y
+    surface <- fromJust <$> readIORef surfaceRef
+    updateSurface stateRef surface x y
+    #queueDraw drawingArea -- Request a redraw
+  return True
 
 realize :: IORef (Maybe Ren.Surface) -> IO ()
 realize surfaceRef = do
