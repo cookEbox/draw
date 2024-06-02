@@ -22,15 +22,15 @@ createFloatingNotepad app = do
   #packStart vbox printQuestion False False 0
   #packStart vbox notebook True True 0
   -- Create several tabs with drawing areas
-  mapM_ (addDrawingAreaTab notebook) ["Questions", "Answers"]
+  mapM_ (addPageTab notebook) [("Questions", question), ("Answers", answer)]
   #showAll floatingWindow
 
-addDrawingAreaTab :: Gtk.Notebook -> Text -> IO ()
-addDrawingAreaTab notebook label = do
-  drawingArea <- new Gtk.DrawingArea []
+addPageTab :: Gtk.Notebook -> (Text, Text) -> IO ()
+addPageTab notebook (label, qa) = do
+  page <- Gtk.labelNew (Just qa)
   labelWidget <- new Gtk.Label [#label := label]
-  _ <- Gtk.notebookAppendPage notebook drawingArea (Just labelWidget)
-  #showAll drawingArea
+  _ <- Gtk.notebookAppendPage notebook page (Just labelWidget)
+  #showAll page
 
 rightClickMenu :: IORef State -> Gtk.Application -> IO Gtk.Menu
 rightClickMenu stateRef app = do

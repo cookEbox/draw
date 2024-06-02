@@ -37,14 +37,16 @@ work flow.
         - [x] make a notepad appear as a floating window with two tabs
         - [x] make the floating notepad closeable
 11. 
-    - [ ] Refactor
+    - [x] Refactor
         - [x] serperate into modules
-        - [ ] move all IORef to a single type 
+        - [x] move all IORef to a single type 
+            - This was not possible as surface needed to be seperate otherwise program crashed
+            - Reduced to two IORef's marking complete
 12. 
-    - [ ] Question Generator
-        - [ ] print to a tab in the floating window
-        - [ ] print questions to the first tab 
-        - [ ] print answers to the second tab
+    - [x] Question Generator
+        - [x] print to a tab in the floating window
+        - [x] print questions to the first tab 
+        - [x] print answers to the second tab
 
 ## Future Tasks 
 - Save page 

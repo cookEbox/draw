@@ -2,11 +2,15 @@
 module BasicSettings where
 
 import qualified GI.Cairo.Render           as Ren
+import Data.Text (Text)
 
 {- Basic settings -}
 
-question :: String
+question :: Text
 question = "1 + 1"
+
+answer :: Text
+answer = "2"
 
 data Color = Default | White | Blue | Red | Green | Black deriving (Show, Eq)
 
