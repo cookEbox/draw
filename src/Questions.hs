@@ -1,5 +1,7 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Questions where
-import Data.Text (Text, pack)
+import Data.Text (Text)
 
 data Level = One | Two | Three
   deriving (Show)
@@ -31,4 +33,4 @@ singleDigitNoCarry s = undefined
 
 questionSelector :: Topic -> Int -> (Text, Text)
 questionSelector (Number (Addition One)) s = singleDigitNoCarry s
-questionSelector _ _ = (pack "Not", pack "Completed")
+questionSelector _ _ = ("Not", "Completed")

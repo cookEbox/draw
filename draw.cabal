@@ -20,6 +20,7 @@ library
     other-modules:    BasicSettings
                     , Buttons
                     , Menu
+                    , Questions
     -- other-extensions:
     build-depends:    
         base >=4.7 && <5
