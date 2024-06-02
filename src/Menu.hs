@@ -51,15 +51,24 @@ rightClickMenu stateRef app = do
   rubber <- new Gtk.MenuItem    [ #label := "Rubber"
                                 , On #activate $ writeIORef stateRef (newPenColor state Black)
                                 ]
-  questions <- new Gtk.MenuItem [ #label := "Questions"
-                                , On #activate $ createFloatingNotepad app
-                                ]
+  questionMenu <- new Gtk.Menu []
+  questions <- new Gtk.MenuItem [ #label := "Questions" ]
+  addMenu <- new Gtk.Menu []
+  addition <- new Gtk.MenuItem [ #label := "Add Questions" ]
+  add1 <- new Gtk.MenuItem [ #label := "Add Level 1"
+                           , On #activate $ createFloatingNotepad app
+                           ]
+  Gtk.menuItemSetSubmenu questions (Just questionMenu)
+  Gtk.menuItemSetSubmenu addition (Just addMenu)
+
   #add menu white
   #add menu red
   #add menu blue
   #add menu green
   #add menu rubber
   #add menu questions
+  #add questionMenu addition
+  #add addMenu add1
   #showAll menu
   return menu
     where newDrawingState st = st { getIsDrawing = False }
