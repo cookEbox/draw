@@ -34,6 +34,7 @@ library
       , gi-cairo-render
       , transformers
       , text
+      , random
 
     hs-source-dirs:   src
     default-language: Haskell2010
@@ -56,6 +57,7 @@ executable draw
       , gi-cairo-render
       , transformers
       , text
+      , random
       
     hs-source-dirs:   app
     default-language: Haskell2010
@@ -81,3 +83,4 @@ test-suite draw-test
       , gi-cairo-render
       , transformers
       , text
+      , random

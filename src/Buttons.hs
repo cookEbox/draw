@@ -34,16 +34,14 @@ updateSurface :: IORef State
               -> Double
               -> Double
               -> IO ()
--- updateSurface penColorRef lastPosRef surface newX newY = do
 updateSurface stateRef surface newX newY = do
   state <- readIORef stateRef
   let color = getPenColor state
-  let lastPos = getLastPos state
-  let penSize = (if color == Black then 10 else 2)
+      lastPos = getLastPos state
+      penSize = (if color == Black then 10 else 2)
   Ren.renderWith surface $ do
       Ren.setLineWidth penSize
       penColor color
-      -- lastPos <- Ren.liftIO $ readIORef lastPosRef
       case lastPos of
         Just (lastX, lastY) -> do
           Ren.moveTo lastX lastY
@@ -77,7 +75,6 @@ motionNotify :: Gdk.EventMotion
              -> Gtk.DrawingArea
              -> IO Bool
 motionNotify event surfaceRef stateRef drawingArea = do
-  -- isDrawing <- readIORef isDrawingRef
   state <- readIORef stateRef
   when (getIsDrawing state) $ do
     x <- get event #x
