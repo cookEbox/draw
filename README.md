@@ -13,6 +13,7 @@ work flow.
 - Duplicate page
 
 ## [ ] Phase 0.1.1
+### Tasks
 1. 
     - [ ] Selecable random question
         - [x] Random generated question 
@@ -33,7 +34,7 @@ work flow.
 
 ## [X] Phase 0.1.0
 
-## Tasks
+### Tasks
 1.  
     - [x] A Drawable interface 
 2.  
