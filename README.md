@@ -3,7 +3,16 @@
 Draw is a first attempt to produce a PPT clone aimed to fit a Mathematics Teachers
 work flow.
 
-## Phase 0.1.1
+## Future Tasks 
+- Save page 
+- Save all pages
+- Resizable drawing area for monitor size 
+- Changing size of rubber and drawing Pen
+- Clear annotations
+- Move to new page when adding page
+- Duplicate page
+
+## [ ] Phase 0.1.1
 1. 
     - [ ] Selecable random question
         - [x] Random generated question 
@@ -20,9 +29,9 @@ work flow.
     - [ ] Save a page 
 
 5. 
-    - [ ] load a page
+    - [ ] Load a page
 
-## Phase 0.1.0
+## [X] Phase 0.1.0
 
 ## Tasks
 1.  
@@ -66,12 +75,3 @@ work flow.
         - [x] print to a tab in the floating window
         - [x] print questions to the first tab 
         - [x] print answers to the second tab
-
-## Future Tasks 
-- Save page 
-- Save all pages
-- Resizable drawing area for monitor size 
-- Changing size of rubber and drawing Pen
-- Clear annotations
-- Move to new page when adding page
-- Duplicate page
