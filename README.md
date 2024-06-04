@@ -7,7 +7,8 @@ work flow.
 - Save page 
 - Save all pages
 - Resizable drawing area for monitor size 
-- Changing size of rubber and drawing Pen
+- Changing (as a user setting) size of rubber and drawing Pen
+- Having a point for a cursor relative to draw size
 - Clear annotations
 - Move to new page when adding page
 - Duplicate page

@@ -38,7 +38,7 @@ updateSurface stateRef surface newX newY = do
   state <- readIORef stateRef
   let color = getPenColor state
       lastPos = getLastPos state
-      penSize = (if color == Black then 10 else 2)
+      penSize = (if color == Default then 10 else 2)
   Ren.renderWith surface $ do
       Ren.setLineWidth penSize
       penColor color

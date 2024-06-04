@@ -3,11 +3,11 @@
 module Menu where
 
 import           BasicSettings
-import           Questions
 import           Data.IORef    (IORef, readIORef, writeIORef)
 import           Data.Text     (Text)
 import           GI.Gio
 import qualified GI.Gtk        as Gtk
+import           Questions
 import           System.Random (randomRIO)
 
 createFloatingNotepad :: Gtk.Application -> IO ()
@@ -24,8 +24,8 @@ createFloatingNotepad app = do
   #packStart vbox printQuestion False False 0
   #packStart vbox notebook True True 0
   -- Create several tabs with drawing areas
-  s1 <- randomRIO (0 :: Int, 5000) 
-  s2 <- randomRIO (0 :: Int, 5000) 
+  s1 <- randomRIO (0 :: Int, 5000)
+  s2 <- randomRIO (0 :: Int, 5000)
   let (question, answer) = questionSelector (Number (Addition One)) s1 s2
   mapM_ (addPageTab notebook) [("Questions", question), ("Answers", answer)]
   #showAll floatingWindow
@@ -41,25 +41,25 @@ rightClickMenu :: IORef State -> Gtk.Application -> IO Gtk.Menu
 rightClickMenu stateRef app = do
   state <- readIORef stateRef
   menu <- new Gtk.Menu [ On #hide $ writeIORef stateRef (newDrawingState state) ]
-  white <- new Gtk.MenuItem     
+  white <- new Gtk.MenuItem
     [ #label := "White"
     , On #activate $ writeIORef stateRef (newPenColor state White)
     ]
-  red <- new Gtk.MenuItem       
+  red <- new Gtk.MenuItem
     [ #label := "Red"
     , On #activate $ writeIORef stateRef (newPenColor state Red)
     ]
-  blue <- new Gtk.MenuItem      
+  blue <- new Gtk.MenuItem
     [ #label := "Blue"
     , On #activate $ writeIORef stateRef (newPenColor state Blue)
     ]
-  green <- new Gtk.MenuItem     
+  green <- new Gtk.MenuItem
     [ #label := "Green"
     , On #activate $ writeIORef stateRef (newPenColor state Green)
     ]
-  rubber <- new Gtk.MenuItem    
+  rubber <- new Gtk.MenuItem
     [ #label := "Rubber"
-    , On #activate $ writeIORef stateRef (newPenColor state Black)
+    , On #activate $ writeIORef stateRef (newPenColor state Default)
     ]
   questionMenu <- new Gtk.Menu []
   questions <- new Gtk.MenuItem [ #label := "Questions" ]
