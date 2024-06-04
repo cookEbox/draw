@@ -61,6 +61,11 @@ rightClickMenu stateRef app = do
     [ #label := "Rubber"
     , On #activate $ writeIORef stateRef (newPenColor state Default)
     ]
+  #add menu white
+  #add menu red
+  #add menu blue
+  #add menu green
+  #add menu rubber
   questionMenu <- new Gtk.Menu []
   questions <- new Gtk.MenuItem [ #label := "Questions" ]
   addMenu <- new Gtk.Menu []
@@ -70,11 +75,6 @@ rightClickMenu stateRef app = do
                            ]
   Gtk.menuItemSetSubmenu questions (Just questionMenu)
   Gtk.menuItemSetSubmenu addition (Just addMenu)
-  #add menu white
-  #add menu red
-  #add menu blue
-  #add menu green
-  #add menu rubber
   #add menu questions
   #add questionMenu addition
   #add addMenu add1

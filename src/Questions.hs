@@ -3,7 +3,7 @@
 module Questions where
 import           Data.List     (unfoldr)
 import           Data.Text     (Text, pack)
-import           System.Random (mkStdGen, randomRIO, uniformR)
+import           System.Random (mkStdGen, uniformR)
 
 type Seed = Int
 
