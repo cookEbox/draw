@@ -21,11 +21,15 @@ work flow.
         - [ ] A choice of question topics
         - [ ] A choice of question levels
 
-2.
-    - [ ] Multiple Questions displayed
-
-3. 
+2. 
     - [ ] Turn questions and answers into drawing areas
+        - [x] Seperate out addPages into a basic pages function without buttons
+        - [ ] seperate out rightClickMenu into a basic menu without questions
+        - [ ] reuse basic functions (above) to make questions into an interactive drawing area
+        - [ ] render questions using Con.renderWithContext to render questions to drawing area
+
+3.
+    - [ ] Multiple Questions displayed
 
 4. 
     - [ ] Save a page 
