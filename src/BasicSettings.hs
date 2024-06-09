@@ -2,15 +2,33 @@
 module BasicSettings where
 
 import qualified GI.Cairo.Render as Ren
--- import Data.Text (Text)
 
-{- Basic settings -}
+type Seed = Int
 
--- question :: Text
--- question = "1 + 1"
---
--- answer :: Text
--- answer = "2"
+data Level = One | Two | Three
+  deriving (Show)
+
+data NumType = Addition Level
+             | Subtraction Level
+  deriving (Show)
+
+data GeoType = Polygon Level
+             | Circle Level
+  deriving (Show)
+
+data AlgType = Collect Level
+             | Solve Level
+  deriving (Show)
+
+data StaType = Average Level
+             | Graphs Level
+  deriving (Show)
+
+data Topic = Number NumType
+           | Geometry GeoType
+           | Algebra AlgType
+           | Statistics StaType
+  deriving (Show)
 
 data Color = Default | White | Blue | Red | Green | Black
   deriving (Eq, Show)

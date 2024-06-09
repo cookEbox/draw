@@ -19,7 +19,7 @@ work flow.
     - [ ] Selecable random question
         - [x] Random generated question 
         - [ ] A choice of question topics
-        - [ ] A choice of question levels
+        - [x] A choice of question levels
 
 2. 
     - [ ] Turn questions and answers into drawing areas

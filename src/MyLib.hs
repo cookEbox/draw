@@ -31,8 +31,8 @@ updatePageLabel notebook pageIndex = do
 data NewPage = Append | InsertBefore | InsertAfter
   deriving (Eq)
 
-page :: Gtk.Application -> RCMenus -> IO Gtk.DrawingArea
-page app rcMenu = do
+page :: Gtk.Application ->  IO Gtk.DrawingArea
+page app = do
   surfaceRef <- newIORef Nothing
   stateRef <- newIORef $ State
                        { getLastPos = Nothing

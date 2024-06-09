@@ -10,8 +10,8 @@ import qualified GI.Gtk        as Gtk
 import           Questions
 import           System.Random (randomRIO)
 
-createFloatingNotepad :: Gtk.Application -> IO ()
-createFloatingNotepad app = do
+createFloatingNotepad :: Gtk.Application -> Topic -> IO ()
+createFloatingNotepad app topic = do
   vbox <- new Gtk.Box [ #orientation := Gtk.OrientationVertical ]
   floatingWindow <- new Gtk.Window [ #title := "Question Window"
                                    , #child := vbox
@@ -26,7 +26,7 @@ createFloatingNotepad app = do
   -- Create several tabs with drawing areas
   s1 <- randomRIO (0 :: Int, 5000)
   s2 <- randomRIO (0 :: Int, 5000)
-  let (question, answer) = questionSelector (Number (Addition One)) s1 s2
+  let (question, answer) = questionSelector topic s1 s2
   mapM_ (addPageTab notebook) [("Questions", question), ("Answers", answer)]
   #showAll floatingWindow
 
@@ -71,13 +71,17 @@ rightClickMenu stateRef app = do
   addMenu <- new Gtk.Menu []
   addition <- new Gtk.MenuItem [ #label := "Add Questions" ]
   add1 <- new Gtk.MenuItem [ #label := "Add Level 1"
-                           , On #activate $ createFloatingNotepad app
+                           , On #activate $ createFloatingNotepad app (Number (Addition One))
+                           ]
+  add2 <- new Gtk.MenuItem [ #label := "Add Level 2"
+                           , On #activate $ createFloatingNotepad app (Number (Addition Two))
                            ]
   Gtk.menuItemSetSubmenu questions (Just questionMenu)
   Gtk.menuItemSetSubmenu addition (Just addMenu)
   #add menu questions
   #add questionMenu addition
   #add addMenu add1
+  #add addMenu add2
   #showAll menu
   return menu
     where newDrawingState st = st { getIsDrawing = False }
