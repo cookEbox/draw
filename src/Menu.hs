@@ -66,22 +66,46 @@ rightClickMenu stateRef app = do
   #add menu blue
   #add menu green
   #add menu rubber
-  questionMenu <- new Gtk.Menu []
-  questions <- new Gtk.MenuItem [ #label := "Questions" ]
+  topicMenu <- new Gtk.Menu []
+  topics <- new Gtk.MenuItem [ #label := "Topics" ]
+  numberMenu <- new Gtk.Menu []
+  number <- new Gtk.MenuItem [ #label := "Number" ]
   addMenu <- new Gtk.Menu []
+  geometry <- new Gtk.MenuItem [ #label := "Geometry" ]
+  geoMenu <- new Gtk.Menu []
   addition <- new Gtk.MenuItem [ #label := "Add Questions" ]
+  subMenu <- new Gtk.Menu []
+  subtraction <- new Gtk.MenuItem [ #label := "Subtraction Questions" ]
+  areaMenu <- new Gtk.Menu []
+  area <- new Gtk.MenuItem [ #label := "Area Questions" ]
   add1 <- new Gtk.MenuItem [ #label := "Add Level 1"
                            , On #activate $ createFloatingNotepad app (Number (Addition One))
                            ]
   add2 <- new Gtk.MenuItem [ #label := "Add Level 2"
                            , On #activate $ createFloatingNotepad app (Number (Addition Two))
                            ]
-  Gtk.menuItemSetSubmenu questions (Just questionMenu)
+  sub1 <- new Gtk.MenuItem [ #label := "Subtract Level 1"
+                           , On #activate $ createFloatingNotepad app (Number (Subtraction One))
+                           ]
+  area1 <- new Gtk.MenuItem [ #label := "Area Level 1"
+                            , On #activate $ createFloatingNotepad app (Geometry (Area One))
+                            ]
+  Gtk.menuItemSetSubmenu topics (Just topicMenu)
+  Gtk.menuItemSetSubmenu number (Just numberMenu)
+  Gtk.menuItemSetSubmenu geometry (Just geoMenu)
+  Gtk.menuItemSetSubmenu area (Just areaMenu)
   Gtk.menuItemSetSubmenu addition (Just addMenu)
-  #add menu questions
-  #add questionMenu addition
+  Gtk.menuItemSetSubmenu subtraction (Just subMenu)
+  #add menu topics
+  #add topicMenu number
+  #add topicMenu geometry
+  #add numberMenu addition
   #add addMenu add1
   #add addMenu add2
+  #add numberMenu subtraction
+  #add subMenu sub1
+  #add geoMenu area
+  #add areaMenu area1
   #showAll menu
   return menu
     where newDrawingState st = st { getIsDrawing = False }

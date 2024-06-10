@@ -16,9 +16,10 @@ work flow.
 ## [ ] Phase 0.1.1
 ### Tasks
 1. 
-    - [ ] Selecable random question
+    - [x] Selecable random question
         - [x] Random generated question 
-        - [ ] A choice of question topics
+        - [x] A choice of question topics
+            - [x] Subtopics
         - [x] A choice of question levels
 
 2. 

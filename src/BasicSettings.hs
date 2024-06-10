@@ -14,6 +14,7 @@ data NumType = Addition Level
 
 data GeoType = Polygon Level
              | Circle Level
+             | Area Level
   deriving (Show)
 
 data AlgType = Collect Level
