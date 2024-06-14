@@ -38,7 +38,7 @@ backGroundColor :: Ren.Render ()
 backGroundColor = Ren.setSourceRGB 0 0 0
 
 penColor :: Color -> Ren.Render ()
-penColor Default = Ren.setSourceRGB 255 255 255
+penColor Default = Ren.setSourceRGB 0 0 0
 penColor White   = Ren.setSourceRGB 255 255 255
 penColor Blue    = Ren.setSourceRGB 0 0 255
 penColor Red     = Ren.setSourceRGB 255 0 0
@@ -50,10 +50,10 @@ pageWidth = 2200
 pageHeight = 1300
 
 data State = State
-               { getLastPos   :: Maybe (Double, Double)
-               , getIsDrawing :: Bool
-               , getPenColor  :: Color
-               }
+              { getLastPos   :: Maybe (Double, Double)
+              , getIsDrawing :: Bool
+              , getPenColor  :: Color
+              }
 
 data RCMenus = Basic | BasicAndQuestions
   deriving (Eq)

@@ -25,7 +25,7 @@ handleDraw surfaceRef _ cairoContext = do
       Con.renderWithContext (Ren.setSourceSurface surface 0 0) cairoContext
       Con.renderWithContext Ren.paint cairoContext
     Nothing -> return ()
-  return True
+  return False
 
 {- Handling Drawing from mouse being clicked and dragged -}
 

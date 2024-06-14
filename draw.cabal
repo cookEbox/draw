@@ -1,6 +1,6 @@
 cabal-version:      3.0
 name:               draw
-version:            0.1.1.1
+version:            0.1.1.2
 -- synopsis:
 -- description:
 license:            NONE
@@ -17,8 +17,8 @@ common warnings
 library
     import:           warnings
     exposed-modules:  MyLib
-    other-modules:    BasicSettings
-                    , Buttons
+                    , BasicSettings
+    other-modules:    Buttons
                     , Menu
                     , Questions
     -- other-extensions:

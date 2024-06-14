@@ -1,12 +1,9 @@
-{-# LANGUAGE ImplicitParams    #-}
 {-# LANGUAGE OverloadedLabels  #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module MyLib where
 
 import           BasicSettings
-import           Buttons
-import           Data.IORef    (newIORef)
 import           Data.Text     (pack)
 import qualified GI.Gdk        as Gdk
 import           GI.Gio
@@ -31,33 +28,9 @@ updatePageLabel notebook pageIndex = do
 data NewPage = Append | InsertBefore | InsertAfter
   deriving (Eq)
 
-page :: Gtk.Application ->  IO Gtk.DrawingArea
-page app = do
-  surfaceRef <- newIORef Nothing
-  stateRef <- newIORef $ State
-                       { getLastPos = Nothing
-                       , getIsDrawing = False
-                       , getPenColor = White
-                       }
-  menu <- rightClickMenu stateRef app
-  new Gtk.DrawingArea
-    [ #widthRequest := pageWidth
-    , #heightRequest := pageHeight
-    , On #draw $ handleDraw surfaceRef ?self
-    , On #buttonPressEvent $ \event ->
-        buttonPress event stateRef
-    , On #buttonReleaseEvent $ \event ->
-        buttonRelease event stateRef
-    , On #motionNotifyEvent $ \event ->
-        motionNotify event surfaceRef stateRef ?self
-    , On #buttonPressEvent $ \event ->
-        rightClickNotify event menu
-    , On #realize $ realize surfaceRef
-    ]
-
-addPage :: NewPage -> Gtk.Notebook -> Gtk.Application -> IO ()
-addPage addOrInsert notebook app = do
-  drawingArea <- page app
+addPage :: RCMenus -> NewPage -> Gtk.Notebook -> Gtk.Application -> IO ()
+addPage rcm addOrInsert notebook app = do
+  drawingArea <- page rcm app
   pg <- Gtk.notebookGetNPages notebook
   pageLabel <- new Gtk.Label [#label := pack $ "Page " ++ show (pg + 1)]
   currentPosition <- Gtk.notebookGetCurrentPage notebook

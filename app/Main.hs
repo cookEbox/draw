@@ -8,6 +8,7 @@ import           Control.Monad       (when)
 import           GI.Gio
 import qualified GI.Gtk              as Gtk
 import           MyLib               (NewPage (..), addPage, removePage)
+import           BasicSettings
 import           System.Environment
 import           System.Exit
 
@@ -18,7 +19,7 @@ activate :: Gtk.Application -> ApplicationActivateCallback
 activate app = do
   notebook <- new Gtk.Notebook []
   #setTabPos notebook Gtk.PositionTypeLeft
-  addPage Append notebook app
+  addPage BasicAndQuestions Append notebook app
   scrolledWin <- new Gtk.ScrolledWindow
     [ #hscrollbarPolicy := Gtk.PolicyTypeAutomatic
     , #vscrollbarPolicy := Gtk.PolicyTypeAutomatic
@@ -35,13 +36,13 @@ activate app = do
     , #defaultHeight := 1000
     ]
   addPageButton <- new Gtk.Button [ #label := "Add Page"
-                                  , On #clicked (addPage Append notebook app)
+                                  , On #clicked (addPage BasicAndQuestions Append notebook app)
                                   ]
   insertBeforeButton <- new Gtk.Button [ #label := "Insert Page Before"
-                                  , On #clicked (addPage InsertBefore notebook app)
+                                  , On #clicked (addPage BasicAndQuestions InsertBefore notebook app)
                                   ]
   insertAfterButton <- new Gtk.Button [ #label := "Insert Page After"
-                                  , On #clicked (addPage InsertAfter notebook app)
+                                  , On #clicked (addPage BasicAndQuestions InsertAfter notebook app)
                                   ]
   removePageButton <- new Gtk.Button [ #label := "Delete Current Page"
                                      , On #clicked (removePage notebook)
