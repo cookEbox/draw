@@ -82,7 +82,7 @@ motionNotify event surfaceRef stateRef drawingArea = do
     surface <- fromJust <$> readIORef surfaceRef
     updateSurface stateRef surface x y
     #queueDraw drawingArea -- Request a redraw
-  return True
+  return False
 
 realize :: IORef (Maybe Ren.Surface) -> IO ()
 realize surfaceRef = do

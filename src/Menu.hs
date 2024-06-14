@@ -9,7 +9,6 @@ import           Data.Text     (Text, pack)
 import           Questions
 import           System.Random (randomRIO)
 import           Buttons
-import qualified GI.Cairo                  as Cairo
 import qualified GI.Cairo.Render           as Ren
 import qualified GI.Cairo.Render.Connector as Con
 import qualified GI.Gdk                    as Gdk
