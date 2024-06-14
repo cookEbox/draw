@@ -65,7 +65,6 @@ addPageTab :: Gtk.Notebook -> Gtk.Application -> (Text, Text) -> IO ()
 addPageTab notebook app (label, qa) = do
   drawingArea <- page Basic app
   void $ Gtk.onWidgetDraw drawingArea $ \context -> do 
-    putStrLn "Draw callback triggered"
     Con.renderWithContext (do 
       Ren.setSourceRGB 1 1 1 
       Ren.selectFontFace (pack "Sans") Ren.FontSlantNormal Ren.FontWeightNormal
