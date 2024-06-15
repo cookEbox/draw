@@ -84,13 +84,6 @@ addPageTab notebook app (label, qa) = do
     ]
   #showAll drawingArea
 
--- addPageTab :: Gtk.Notebook -> (Text, Text) -> IO ()
--- addPageTab notebook (label, qa) = do
---   pg <- Gtk.labelNew (Just qa)
---   labelWidget <- new Gtk.Label [#label := label]
---   _ <- Gtk.notebookAppendPage notebook pg (Just labelWidget)
---   #showAll pg
-
 rightClickMenuQuestions :: Gtk.Application -> Gtk.Menu -> IO ()
 rightClickMenuQuestions app menu = do 
   topicMenu <- new Gtk.Menu []
