@@ -42,11 +42,11 @@ library
 executable draw
     import:           warnings
     main-is:          Main.hs
-    other-modules:    Buttons
-                    , Menu
-                    , Questions
-                    , MyLib
-                    , BasicSettings
+    -- exposed-modules:  MyLib
+    --                 , BasicSettings
+    -- other-modules:    Buttons
+    --                 , Menu
+    --                 , Questions
     -- other-modules:
     -- other-extensions:
     build-depends:
