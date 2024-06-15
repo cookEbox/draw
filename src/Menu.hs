@@ -14,7 +14,7 @@ import qualified GI.Cairo.Render.Connector as Con
 import qualified GI.Gdk                    as Gdk
 import           GI.Gio
 import qualified GI.Gtk                    as Gtk
-import Control.Monad (void)
+import Control.Monad (void, replicateM)
 
 page :: RCMenus -> Gtk.Application ->  IO Gtk.DrawingArea
 page rcm app = do
@@ -54,11 +54,15 @@ createFloatingNotepad app topic = do
   #packStart vbox printQuestion False False 0
   #packStart vbox notebook True True 0
   -- Create several tabs with drawing areas
-  s1 <- randomRIO (0 :: Int, 5000)
-  s2 <- randomRIO (0 :: Int, 5000)
-  let (question, answer) = questionSelector topic s1 s2
-  mapM_ (addPageTab notebook app) [("Questions", question), ("Answers", answer)]
+  seeds <- replicateM 10 (tupSequence randomRIO ((0 :: Int, 5000),(0 :: Int, 5000)))
+  let (_:qs,_:as) = foldl zipTup ("","") $ map (uncurry $ questionSelector topic) seeds
+  mapM_ (addPageTab notebook app) [("Questions", pack qs), ("Answers", pack as)]
   #showAll floatingWindow
+    where tupSequence f (a, b) = do 
+            x <- f a 
+            y <- f b 
+            return (x, y)
+          zipTup (a, b) (x, y) = (a <> ";    " <> x, b <> ";    " <> y)
 
 addPageTab :: Gtk.Notebook -> Gtk.Application -> (Text, Text) -> IO ()
 addPageTab notebook app (label, qa) = do

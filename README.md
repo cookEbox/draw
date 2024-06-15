@@ -30,7 +30,7 @@ work flow.
         - [x] render questions using Con.renderWithContext to render questions to drawing area
 
 3.
-    - [ ] Multiple Questions displayed
+    - [x] Multiple Questions displayed
 
 4. 
     - [ ] Save a page 

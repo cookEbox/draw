@@ -3,48 +3,47 @@
 module Questions where
 import           BasicSettings 
 import           Data.List     (unfoldr)
-import           Data.Text     (Text, pack)
 import           System.Random (mkStdGen, uniformR)
 
 rolls :: Seed -> Seed -> Int
 rolls n = head . unfoldr (Just . uniformR (0, n)) . mkStdGen
 
-singleDigitAddNoCarry :: Seed -> Seed -> (Text, Text)
-singleDigitAddNoCarry s1 s2 = (pack $ fstNum ++ " + " ++ sndNum, answer)
+singleDigitAddNoCarry :: Seed -> Seed -> (String, String)
+singleDigitAddNoCarry s1 s2 = (fstNum ++ " + " ++ sndNum, answer)
   where
     fstRoll = rolls 9 s1
     sndRoll = rolls (9 - fstRoll) s2
-    answer  = pack . show $ fstRoll + sndRoll
+    answer  = show $ fstRoll + sndRoll
     fstNum  = show fstRoll
     sndNum  = show sndRoll
 
-twoDigitAddNoCarry :: Seed -> Seed -> (Text, Text)
-twoDigitAddNoCarry s1 s2 = (pack $ fstNum ++ " + " ++ sndNum, answer)
+twoDigitAddNoCarry :: Seed -> Seed -> (String, String)
+twoDigitAddNoCarry s1 s2 = (fstNum ++ " + " ++ sndNum, answer)
   where
     fstRoll = rolls 99 s1
     sndRoll = rolls (9 - (fstRoll `mod` 10)) s2
-    answer  = pack . show $ fstRoll + sndRoll
+    answer  = show $ fstRoll + sndRoll
     fstNum  = show fstRoll
     sndNum  = show sndRoll
 
-singleDigitSubNoCarry :: Seed -> Seed -> (Text, Text)
-singleDigitSubNoCarry s1 s2 = (pack $ fstNum ++ " - " ++ sndNum, answer)
+singleDigitSubNoCarry :: Seed -> Seed -> (String, String)
+singleDigitSubNoCarry s1 s2 = (fstNum ++ " - " ++ sndNum, answer)
   where
     fstRoll = rolls 9 s1
     sndRoll = rolls fstRoll s2
-    answer  = pack . show $ fstRoll - sndRoll
+    answer  = show $ fstRoll - sndRoll
     fstNum  = show fstRoll
     sndNum  = show sndRoll
 
-areaOfRectangle1 :: Seed -> (Text, Text)
-areaOfRectangle1 s1 = (pack question, pack $ answer ++ " cm^2")
+areaOfRectangle1 :: Seed -> (String, String)
+areaOfRectangle1 s1 = (question, answer ++ " cm^2")
   where
     question = "What is the area of a rectangle with height 10 cm and width " ++ fstNum ++ " cm"
     fstRoll = rolls 9 s1
     answer  = show $ fstRoll * 10
     fstNum  = show fstRoll
 
-questionSelector :: Topic -> Seed -> Seed -> (Text, Text)
+questionSelector :: Topic -> Seed -> Seed -> (String, String)
 questionSelector (Number (Addition One)) s1 s2 = singleDigitAddNoCarry s1 s2
 questionSelector (Number (Subtraction One)) s1 s2 = singleDigitSubNoCarry s1 s2
 questionSelector (Number (Addition Two)) s1 s2 = twoDigitAddNoCarry s1 s2
